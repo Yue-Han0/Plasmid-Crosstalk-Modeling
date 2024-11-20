@@ -1,0 +1,5 @@
+Ribosome_Binding_F, Expression,0.81873,
+Ribosome_Binding_R, Expression,59219,
+,,,
+RBS_Length, Numeric,20, 
+spacer_Length, Numeric,33,

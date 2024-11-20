@@ -1,0 +1,5 @@
+Ribosome_Binding_F, Expression,0,no translation with broc
+Ribosome_Binding_R, Expression,0,
+,,,
+RBS_Length, Numeric,0, 
+spacer_Length, Numeric,152,

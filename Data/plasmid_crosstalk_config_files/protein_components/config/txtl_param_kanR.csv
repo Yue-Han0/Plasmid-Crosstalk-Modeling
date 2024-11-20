@@ -1,0 +1,5 @@
+Gene_Length, Numeric,783,Assuming 261 AA *3 = 783 bp 
+LVA_tag_Length, Numeric,0,
+Terminator_Length, Numeric,50,
+,,,
+Protein_Maturation, Expression, log(2)/(5), protein maturation rate is 5 min
