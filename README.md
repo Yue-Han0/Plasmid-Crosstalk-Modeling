@@ -30,11 +30,6 @@ Construct Simbiology model object containing experimental data, mechanistic mode
 ## 5. Parameter Sampling 
 **run_param_and_init_cond_sampling_v2.m**: calculate surrogate terms for lhs sampled parameters 
 
-## 6. Other experiments 
-### 6.1 Alternative RNA degradation mechanism     
-### 6.2 Model calibration with normalized data     
-### 6.3 Alternative toxin mechanism
-
-## 7. Results & Visualization 
-**result_files**: contains surrogate term values with estimated parameters or sampled parameters 
+## 6. Results & Visualization 
+**result_files**: contains surrogate term values with estimated parameters or sampled parameters     
 **plot_functions**：contains functions for visualization
