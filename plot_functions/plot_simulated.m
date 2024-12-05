@@ -13,8 +13,11 @@ function plot_simulated(Time,Data,option,exp_Time,exp_Data,species_option_struct
     % Plot time-course data in the crosstalk format
     promotor_name_list = {'T7_strong','T7_weak','sigma70_strong','sigma70_weak'};
     conc_vec = [0.5,1,2.5,5,10,15,30];
-    all_colors = {'g',[0.5,0.5,0.5],'b','r'};
+    all_colors = {'g',[0.5,0.5,0.5],'r','b'};
     num_promotors = length(Data)/28; 
+    cmap = hsv(256);
+    colorIndices = round(linspace(1, size(cmap, 1) - 64,length(conc_vec)));
+    sampledColors = cmap(colorIndices, :);
 
     figure; 
     switch option
@@ -26,13 +29,45 @@ function plot_simulated(Time,Data,option,exp_Time,exp_Data,species_option_struct
                     data_idx = (prom_idx - 1) * 28 + conc_idx; 
                     simulated_time = Time{data_idx,1}; 
                     simulated_data = Data{data_idx,1}; 
-                    plot(simulated_time,simulated_data(:,1),'LineWidth',1.5)
+                    plot(simulated_time ./ 3600,simulated_data(:,1),'LineWidth',1.5,'Color',sampledColors(conc_idx,:))
                     hold on 
                 end
-                xlabel('Time(s)')
+                xlabel('Time(hr)')
                 ylabel('Concentration(nM)')
-                title(strrep(promotor_name,'_',' '))
+                if contains(promotor_name,'sigma')
+                    promotor_name_for_plot = strcat('\',strrep(promotor_name,'_',' '));
+                else
+                    promotor_name_for_plot = strrep(promotor_name,'_',' ');
+                end
+                title(promotor_name_for_plot)
                 legend('0.5nM','1nM','2.5nM','5nM','10nM','15nM','30nM')
+                set(gca,'FontSize',14)
+            end
+        case 'baseline_short'
+            for prom_idx = 1:num_promotors
+                promotor_name = promotor_name_list{prom_idx}; 
+                subplot(2,2,prom_idx)
+                for conc_idx = 1:length(conc_vec)
+                    data_idx = (prom_idx - 1) * 28 + conc_idx; 
+                    simulated_time = Time{data_idx,1}; 
+                    simulated_data = Data{data_idx,1}; 
+                    selected_simulated_time = simulated_time(simulated_time <= 18000); 
+                    selected_simulated_data = simulated_data(simulated_time <= 18000); 
+                    plot(selected_simulated_time./3600,selected_simulated_data(:,1),'LineWidth',1.5,'Color',sampledColors(conc_idx,:))
+                    hold on 
+                end
+                xlabel('Time(hr)')
+                ylabel('Concentration(nM)')
+                if contains(promotor_name,'sigma')
+                    promotor_name_for_plot = strcat('\',strrep(promotor_name,'_',' '));
+                else
+                    promotor_name_for_plot = strrep(promotor_name,'_',' ');
+                end
+                title(promotor_name_for_plot)
+                if isequal(prom_idx,num_promotors)
+                    legend('0.5nM','1nM','2.5nM','5nM','10nM','15nM','30nM')
+                end
+                set(gca,'FontSize',14)
             end
         case 'crosstalk_ratio'
             crosstalk_ratios = calculate_crosstalk_ratio_v2(Time,Data,length(conc_vec),num_promotors,'PE'); 
@@ -40,16 +75,27 @@ function plot_simulated(Time,Data,option,exp_Time,exp_Data,species_option_struct
                 subplot(2,2,prom_idx)
                 promotor_name = promotor_name_list{prom_idx}; 
                 prom_crosstalk_ratio = crosstalk_ratios(:,prom_idx); 
-                scatter(conc_vec,prom_crosstalk_ratio{1},'MarkerFaceColor',all_colors{2})
+                scatter(conc_vec,prom_crosstalk_ratio{1},'MarkerFaceColor',all_colors{2},'LineWidth',0.75)
                 hold on 
-                scatter(conc_vec,prom_crosstalk_ratio{2},'MarkerFaceColor',all_colors{4})
-                scatter(conc_vec,prom_crosstalk_ratio{3},'MarkerFaceColor',all_colors{3})
-                plot(conc_vec,prom_crosstalk_ratio{1},'Color',all_colors{2},'LineWidth',1.5)
+                scatter(conc_vec,prom_crosstalk_ratio{2},'MarkerFaceColor',all_colors{3},'LineWidth',0.6)
+                scatter(conc_vec,prom_crosstalk_ratio{3},'MarkerFaceColor',all_colors{4})
+                plot(conc_vec,prom_crosstalk_ratio{1},'Color',all_colors{2},'LineWidth',1.7)
                 hold on 
-                plot(conc_vec,prom_crosstalk_ratio{2},'Color',all_colors{4},'LineWidth',1.5)
-                plot(conc_vec,prom_crosstalk_ratio{3},'Color',all_colors{3},'LineWidth',1.5)
-                title(strrep(promotor_name,'_',' '))
-                legend('empty','empty T7','empty sigma70')
+                plot(conc_vec,prom_crosstalk_ratio{2},'Color',all_colors{3},'LineWidth',1.6)
+                plot(conc_vec,prom_crosstalk_ratio{3},'Color',all_colors{4},'LineWidth',1.5)
+                if contains(promotor_name,'sigma')
+                    promotor_name_for_plot = strcat('\',strrep(promotor_name,'_',' '));
+                else
+                    promotor_name_for_plot = strrep(promotor_name,'_',' ');
+                end
+                title(promotor_name_for_plot)
+                yline(1,'LineWidth',1.5)
+                if isequal(prom_idx,num_promotors)
+                    legend('empty','empty T7','empty \sigma70','No Crosstalk')
+                end
+                xlabel('Plasmid Concentration (nM)')
+                ylabel('Crosstalk Ratio')
+                set(gca,'FontSize',14)
             end
 
         case 'exhaustive'
